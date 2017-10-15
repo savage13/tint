@@ -1,7 +1,8 @@
 [package]
-name = "colour"
-version = "0.1.0"
-authors = ["Brian Savage <savage@uri.edu>"]
+name = "tint"
+version = "1.0.0"
+authors = ["Brian Savage <savage13@gmail.com>"]
 
 [dependencies]
 lazy_static = "0.2"
+
