@@ -2,6 +2,11 @@
 name = "tint"
 version = "1.0.0"
 authors = ["Brian Savage <savage13@gmail.com>"]
+description = "Color creation and manipulation"
+repository = "https://github.com/savage13/tint"
+readme = "README.md"
+keywords = ["color", "colour", "rgb", "hsv"]
+license-file = "LICENSE"
 
 [dependencies]
 lazy_static = "0.2"
