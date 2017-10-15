@@ -38,6 +38,16 @@
 #[macro_use]
 extern crate lazy_static;
 
+use std::collections::HashMap;
+use std::sync::Mutex;
+use std::io::Cursor;
+use std::fmt;
+use std::fs::File;
+use std::io::BufReader;
+use std::io::BufRead;
+use std::path::Path;
+
+
 pub type Colour = Color;
 
 /// Color value
@@ -362,7 +372,6 @@ impl PartialEq for Color {
     }
 }
 
-use std::fmt;
 impl fmt::Display for Color {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "({:5.3}, {:5.3}, {:5.3}, {:5.3})", self.red, self.green, self.blue, self.alpha)
@@ -370,10 +379,6 @@ impl fmt::Display for Color {
 }
 
 
-use std::fs::File;
-use std::io::BufReader;
-use std::io::BufRead;
-use std::path::Path;
 
 fn parse_rgb_name(line: &str) -> Option<(String, Vec<u8>)> {
     // R G B Color Names
@@ -467,9 +472,6 @@ pub fn load_rgb_file<P>(file: P)
     load_rgb_buffer(fp);
 }
 
-use std::collections::HashMap;
-use std::sync::Mutex;
-use std::io::Cursor;
 lazy_static! {
     static ref COLOR_MAP: Mutex<HashMap<String, Color>> = {
         let mut m : HashMap<String, Color> = HashMap::new();
