@@ -502,6 +502,43 @@ pub fn xkcd() {
     load_rgb_buffer(Cursor::new(COLORS_XKCD));
 }
 
+/// Return names of available named colors
+pub fn names() -> Vec<String> {
+    let map = COLOR_MAP.lock().unwrap();
+    map.keys().cloned().collect()
+}
+
+fn cmp3(a: (f64,f64,f64), b:(f64,f64,f64)) -> std::cmp::Ordering {
+    if a.0 > b.0 {
+        return std::cmp::Ordering::Greater;
+    } else if a.0 < b.0 {
+        return std::cmp::Ordering::Less;
+    }
+    if a.1 > b.1 {
+        return std::cmp::Ordering::Greater;
+    } else if a.1 < b.1 {
+        return std::cmp::Ordering::Less;
+    }
+    if a.2 > b.2 {
+        return std::cmp::Ordering::Greater;
+    } else if a.2 < b.2 {
+        return std::cmp::Ordering::Less;
+    }
+    return std::cmp::Ordering::Equal;
+}
+
+/// Compare Colors by red, then green, then blue
+pub fn compare_by_rgb(a: &Color, b: &Color) -> std::cmp::Ordering {
+    cmp3(a.to_rgb1(), b.to_rgb1())
+}
+
+/// Compare Colors by hue, then saturation, then value
+pub fn compare_by_hsv(a: &Color, b: &Color) -> std::cmp::Ordering {
+    cmp3(a.to_hsv(),b.to_hsv())
+}
+
+
+
 // https://en.wikipedia.org/wiki/YIQ#From_RGB_to_YIQ
 // FCC NTSC Standard
 fn rgb2yiq(r: f64, g: f64, b: f64) -> (f64,f64,f64) {
