@@ -3,7 +3,7 @@
 //!
 //! ```
 //! use colour::Color;
-//! // use Colour::Colour; // Alternatively
+//! use colour::Colour; // Alternatively
 //! let green = Color::from("green");
 //! let green = Color::from("00FF00");
 //! let green = Color::from("00ff00");
@@ -20,6 +20,7 @@
 //! let green = Color::from_rgb1(0.0, 1.0, 0.0);
 //! let green = Color::from_rgb1v(&[0.0, 1.0, 0.0]);
 //! let green = Color::name("green");
+//! let green = Colour::name("green");
 //! ```
 //!
 //! # Color names
@@ -230,6 +231,10 @@ impl Colour {
 }
 
 // Strings
+
+/// Convert from named color or a hex string
+///
+/// This may fail
 impl From<String> for Colour {
     fn from(s: String) -> Colour {
         match Color::name(&s) {
@@ -238,6 +243,9 @@ impl From<String> for Colour {
         }
     }
 }
+/// Convert from named color or a hex string
+///
+/// This may fail
 impl <'a> From<&'a str> for Colour {
     fn from(s: &'a str) -> Colour {
         match Color::name(s) {
@@ -248,16 +256,19 @@ impl <'a> From<&'a str> for Colour {
 }
 
 // Tuples
+/// Convert from a u8 triple, red, green, blue
 impl From<(u8,u8,u8)> for Colour {
     fn from(c: (u8,u8,u8)) -> Colour {
         Colour::from_rgb255(c.0, c.1, c.2)
     }
 }
+/// Convert from a f64 triple, red, green, blue
 impl From<(f64,f64,f64)> for Colour {
     fn from(c: (f64,f64,f64)) -> Colour {
         Colour::from_rgb1(c.0, c.1, c.2)
     }
 }
+/// Convert from a f32 triple, red, green, blue
 impl From<(f32,f32,f32)> for Colour {
     fn from(c: (f32,f32,f32)) -> Colour {
         Colour::from_rgb1(c.0 as f64, c.1 as f64, c.2 as f64)
@@ -265,31 +276,37 @@ impl From<(f32,f32,f32)> for Colour {
 }
 
 // Arrays
+/// Convert from a u8 triple, red, green, blue
 impl <'a> From<&'a [u8;3]> for Colour {
     fn from(c: &'a [u8;3]) -> Colour {
         Colour::from_rgb255v(c)
     }
 }
+/// Convert from a f64 triple, red, green, blue
 impl <'a> From<&'a [f64;3]> for Colour {
     fn from(c: &'a [f64;3]) -> Colour {
         Colour::from_rgb1v(c)
     }
 }
+/// Convert from a f32 triple, red, green, blue
 impl <'a> From<&'a [f32;3]> for Colour {
     fn from(c: &'a [f32;3]) -> Colour {
         Colour::new(c[0] as f64, c[1] as f64, c[2] as f64, 1.0)
     }
 }
+/// Convert from a u8 triple, red, green, blue
 impl From<[u8;3]> for Colour {
     fn from(c: [u8;3]) -> Colour {
         Colour::from_rgb255v(&c)
     }
 }
+/// Convert from a f64 triple, red, green, blue
 impl From<[f64;3]> for Colour {
     fn from(c: [f64;3]) -> Colour {
         Colour::from_rgb1v(&c)
     }
 }
+/// Convert from a f32 triple, red, green, blue
 impl From<[f32;3]> for Colour {
     fn from(c: [f32;3]) -> Colour {
         Colour::new(c[0] as f64, c[1] as f64, c[2] as f64, 1.0)
@@ -297,6 +314,9 @@ impl From<[f32;3]> for Colour {
 }
 
 // Vecs
+/// Convert from a f64 Vec, red, green, blue, maybe alpha
+///
+/// This may fail
 impl <'a> From<&'a Vec<f64>> for Colour {
     fn from(c: &'a Vec<f64>) -> Colour {
         match c.len() {
@@ -306,17 +326,26 @@ impl <'a> From<&'a Vec<f64>> for Colour {
         }
     }
 }
+/// Convert from a f32 Vec, red, green, blue, maybe alpha
+///
+/// This may fail
 impl <'a> From<&'a Vec<f32>> for Colour {
     fn from(c: &'a Vec<f32>) -> Colour {
         let c64 : Vec<_> = c.into_iter().map(|x| *x as f64).collect();
         Colour::from(&c64)
     }
 }
+/// Convert from a f32 Vec, red, green, blue, maybe alpha
+///
+/// This may fail
 impl From<Vec<f64>> for Colour {
     fn from(c: Vec<f64>) -> Colour {
         Colour::from(&c)
     }
 }
+/// Convert from a f32 Vec, red, green, blue, maybe alpha
+///
+/// This may fail
 impl From<Vec<f32>> for Colour {
     fn from(c: Vec<f32>) -> Colour {
         let c64 : Vec<_> = c.into_iter().map(|x| x as f64).collect();
@@ -330,6 +359,13 @@ impl PartialEq for Colour {
             self.blue  == other.blue &&
             self.green == other.green &&
             self.alpha == other.alpha
+    }
+}
+
+use std::fmt;
+impl fmt::Display for Colour {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({:5.3}, {:5.3}, {:5.3}, {:5.3})", self.red, self.green, self.blue, self.alpha)
     }
 }
 
@@ -732,8 +768,12 @@ mod tests {
         assert_eq!(red, "#ff0000".into());
         assert_eq!(red, (1.0,0.0,0.0).into());
     }
-    
-    
+    #[test]
+    fn test_display() {
+        let red = Color::name("red").unwrap();
+        assert_eq!(format!("{}", red), "(1.000, 0.000, 0.000, 1.000)");
+    }
+
     fn assert_tol(a: (f64,f64,f64), b: (f64,f64,f64), tol: f64) {
         if (a.0-b.0).abs() > tol {
             assert_eq!(a,b);
