@@ -256,6 +256,17 @@ impl From<String> for Color {
 /// Convert from named color or a hex string
 ///
 /// This may fail
+impl <'a> From<&'a String> for Color {
+    fn from(s: &'a String) -> Color {
+        match Color::name(s) {
+            None => Color::from_hex(s),
+            Some(c) => c
+        }
+    }
+}
+/// Convert from named color or a hex string
+///
+/// This may fail
 impl <'a> From<&'a str> for Color {
     fn from(s: &'a str) -> Color {
         match Color::name(s) {
