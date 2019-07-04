@@ -11,15 +11,9 @@ Add this to your `Cargo.toml`:
 tint = "1.0.0"
 ```
 
-and this to your crate root:
-
-```rust
-extern crate tint;
-```
-
 ### Example
+
 ```rust
-extern crate tint;
 use tint::Color;
 
 fn main() {

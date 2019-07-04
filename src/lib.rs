@@ -439,7 +439,6 @@ fn parse_name_hex(line: &str) -> Option<(String, Color)> {
 ///      name  #hex-value
 ///      r255 g255 b255 name
 ///   Lines beginning with # are ignored
-
 pub fn read_buffer<T>(buf: T) -> Vec<(String, Color)>
 where
     T: BufRead,
