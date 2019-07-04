@@ -69,10 +69,10 @@ impl Color {
     /// ```
     pub fn new(red: f64, green: f64, blue: f64, alpha: f64) -> Color {
         Color {
-            red: red,
-            green: green,
-            blue: blue,
-            alpha: alpha,
+            red,
+            green,
+            blue,
+            alpha,
         }
     }
 
@@ -130,9 +130,9 @@ impl Color {
     /// ```
     pub fn from_rgb255(red: u8, green: u8, blue: u8) -> Color {
         Color::from_rgb1(
-            (red as f64) / 255.,
-            (green as f64) / 255.,
-            (blue as f64) / 255.,
+            f64::from(red) / 255.,
+            f64::from(green) / 255.,
+            f64::from(blue) / 255.,
         )
     }
     /// Create new Color from RGB u8 vector [0 .. 255]
@@ -176,7 +176,7 @@ impl Color {
         } else {
             0
         };
-        let r = u8::from_str_radix(&hex[n + 0..n + 2], 16).unwrap();
+        let r = u8::from_str_radix(&hex[n..n + 2], 16).unwrap();
         let g = u8::from_str_radix(&hex[n + 2..n + 4], 16).unwrap();
         let b = u8::from_str_radix(&hex[n + 4..n + 6], 16).unwrap();
         Color::from_rgb255(r, g, b)
@@ -217,7 +217,7 @@ impl Color {
     /// ```
     pub fn name(name: &str) -> Option<Color> {
         match COLOR_MAP.lock().unwrap().get(name) {
-            Some(&c) => Some(c.clone()),
+            Some(&c) => Some(c),
             None => None,
         }
     }
@@ -309,7 +309,7 @@ impl From<(f64, f64, f64)> for Color {
 /// Convert from a f32 triple, red, green, blue
 impl From<(f32, f32, f32)> for Color {
     fn from(c: (f32, f32, f32)) -> Color {
-        Color::from_rgb1(c.0 as f64, c.1 as f64, c.2 as f64)
+        Color::from_rgb1(f64::from(c.0), f64::from(c.1), f64::from(c.2))
     }
 }
 
@@ -329,7 +329,7 @@ impl<'a> From<&'a [f64; 3]> for Color {
 /// Convert from a f32 triple, red, green, blue
 impl<'a> From<&'a [f32; 3]> for Color {
     fn from(c: &'a [f32; 3]) -> Color {
-        Color::new(c[0] as f64, c[1] as f64, c[2] as f64, 1.0)
+        Color::new(f64::from(c[0]), f64::from(c[1]), f64::from(c[2]), 1.0)
     }
 }
 /// Convert from a u8 triple, red, green, blue
@@ -347,7 +347,7 @@ impl From<[f64; 3]> for Color {
 /// Convert from a f32 triple, red, green, blue
 impl From<[f32; 3]> for Color {
     fn from(c: [f32; 3]) -> Color {
-        Color::new(c[0] as f64, c[1] as f64, c[2] as f64, 1.0)
+        Color::new(f64::from(c[0]), f64::from(c[1]), f64::from(c[2]), 1.0)
     }
 }
 
@@ -369,7 +369,7 @@ impl<'a> From<&'a Vec<f64>> for Color {
 /// This may fail
 impl<'a> From<&'a Vec<f32>> for Color {
     fn from(c: &'a Vec<f32>) -> Color {
-        let c64: Vec<_> = c.into_iter().map(|x| *x as f64).collect();
+        let c64: Vec<_> = c.iter().map(|x| f64::from(*x)).collect();
         Color::from(&c64)
     }
 }
@@ -386,7 +386,7 @@ impl From<Vec<f64>> for Color {
 /// This may fail
 impl From<Vec<f32>> for Color {
     fn from(c: Vec<f32>) -> Color {
-        let c64: Vec<_> = c.into_iter().map(|x| x as f64).collect();
+        let c64: Vec<_> = c.into_iter().map(f64::from).collect();
         Color::from(&c64)
     }
 }
@@ -514,9 +514,7 @@ lazy_static! {
         for s in [COLORS_BASIC, COLORS_EXTENDED].iter() {
             for (ref xname, color) in read_buffer(Cursor::new(s)).into_iter() {
                 let name = xname.to_lowercase();
-                if !m.contains_key(&name) {
-                    m.insert(name, color);
-                }
+                m.entry(name).or_insert(color);
             }
         }
         Mutex::new(m)
@@ -549,7 +547,7 @@ fn cmp3(a: (f64, f64, f64), b: (f64, f64, f64)) -> std::cmp::Ordering {
     } else if a.2 < b.2 {
         return std::cmp::Ordering::Less;
     }
-    return std::cmp::Ordering::Equal;
+    std::cmp::Ordering::Equal
 }
 
 /// Compare Colors by red, then green, then blue
@@ -571,12 +569,12 @@ fn rgb2yiq(r: f64, g: f64, b: f64) -> (f64, f64, f64) {
     (y, i, q)
 }
 fn yiq2rgb(y: f64, i: f64, q: f64) -> (f64, f64, f64) {
-    let v33 = 1.7090069284064666;
-    let v32 = -1.1085450346420322;
-    let v22 = -0.27478764629897834;
-    let v23 = -0.6356910791873801;
-    let v13 = 0.6235565819861433;
-    let v12 = 0.9468822170900693;
+    let v33 = 1.709_006_928_406_466_6;
+    let v32 = -1.108_545_034_642_032_2;
+    let v22 = -0.274_787_646_298_978_34;
+    let v23 = -0.635_691_079_187_380_1;
+    let v13 = 0.623_556_581_986_143_3;
+    let v12 = 0.946_882_217_090_069_3;
     let r = y + v12 * i + v13 * q;
     let g = y + v22 * i + v23 * q;
     let b = y + v32 * i + v33 * q;
@@ -642,7 +640,7 @@ fn hsv2rgb(h: f64, s: f64, v: f64) -> (f64, f64, f64) {
     if hh >= 360.0 {
         hh = 0.0;
     }
-    hh = hh / 60.0;
+    hh /= 60.0;
     let i = hh.floor() as u64;
     let ff = hh - i as f64;
     let p = v * (1.0 - s);
@@ -668,10 +666,11 @@ fn rgb2hsl(r: f64, g: f64, b: f64) -> (f64, f64, f64) {
         return (0., 0., l);
     }
     let d = cmax - cmin;
-    let mut s = d / (2.0 - cmax - cmin);
-    if l <= 0.5 {
-        s = d / (cmax + cmin);
-    }
+    let s = if l <= 0.5 {
+        d / (cmax + cmin)
+    } else {
+        d / (2.0 - cmax - cmin)
+    };
     let mut h = if r >= cmax {
         let dh = if g < b { 6.0 } else { 0.0 };
         (g - b) / d + dh
@@ -682,7 +681,7 @@ fn rgb2hsl(r: f64, g: f64, b: f64) -> (f64, f64, f64) {
     } else {
         0.0
     };
-    h = h / 6.0;
+    h /= 6.0;
     (h, s, l)
 }
 
@@ -703,7 +702,7 @@ fn hue2rgb(p: f64, q: f64, t: f64) -> f64 {
     if tt < 2. / 3. {
         return p + (q - p) * (2. / 3. - tt) * 6.0;
     }
-    return p;
+    p
 }
 
 fn hsl2rgb(h: f64, s: f64, l: f64) -> (f64, f64, f64) {
@@ -1006,9 +1005,9 @@ mod tests {
         for r in 0..256 {
             for g in 0..256 {
                 for b in 0..256 {
-                    let rf = r as f64 / 255.0;
-                    let gf = g as f64 / 255.0;
-                    let bf = b as f64 / 255.0;
+                    let rf = f64::from(r) / 255.0;
+                    let gf = f64::from(g) / 255.0;
+                    let bf = f64::from(b) / 255.0;
 
                     let (y, i, q) = rgb2yiq(rf, gf, bf);
                     let (r0, g0, b0) = yiq2rgb(y, i, q);
@@ -1024,9 +1023,9 @@ mod tests {
         for r in 0..256 {
             for g in 0..256 {
                 for b in 0..256 {
-                    let rf = r as f64 / 255.0;
-                    let gf = g as f64 / 255.0;
-                    let bf = b as f64 / 255.0;
+                    let rf = f64::from(r) / 255.0;
+                    let gf = f64::from(g) / 255.0;
+                    let bf = f64::from(b) / 255.0;
 
                     let (h, s, l) = rgb2hsl(rf, gf, bf);
                     let (r0, g0, b0) = hsl2rgb(h, s, l);
@@ -1072,9 +1071,9 @@ mod tests {
         for r in 0..256 {
             for g in 0..256 {
                 for b in 0..256 {
-                    let rf = r as f64 / 255.0;
-                    let gf = g as f64 / 255.0;
-                    let bf = b as f64 / 255.0;
+                    let rf = f64::from(r) / 255.0;
+                    let gf = f64::from(g) / 255.0;
+                    let bf = f64::from(b) / 255.0;
 
                     let (h, s, v) = rgb2hsv(rf, gf, bf);
                     let (r0, g0, b0) = hsv2rgb(h, s, v);
