@@ -46,7 +46,7 @@ use std::{
 pub type Colour = Color;
 
 /// Color value
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Color {
     /// Red component [0,1]
     pub red: f64,
@@ -386,15 +386,6 @@ impl From<Vec<f32>> for Color {
     fn from(c: Vec<f32>) -> Color {
         let c64: Vec<_> = c.into_iter().map(f64::from).collect();
         Color::from(&c64)
-    }
-}
-
-impl PartialEq for Color {
-    fn eq(&self, other: &Color) -> bool {
-        self.red == other.red
-            && self.blue == other.blue
-            && self.green == other.green
-            && self.alpha == other.alpha
     }
 }
 
