@@ -33,17 +33,15 @@
 //! ## XKCD Colors
 //! https://xkcd.com/color/rgb/
 
-#[macro_use]
-extern crate lazy_static;
-
-use std::collections::HashMap;
-use std::fmt;
-use std::fs::File;
-use std::io::BufRead;
-use std::io::BufReader;
-use std::io::Cursor;
-use std::path::Path;
-use std::sync::Mutex;
+use lazy_static::lazy_static;
+use std::{
+    collections::HashMap,
+    fmt,
+    fs::File,
+    io::{BufRead, BufReader, Cursor},
+    path::Path,
+    sync::Mutex,
+};
 
 pub type Colour = Color;
 
@@ -77,7 +75,6 @@ impl Color {
     }
 
     // RGB 1.0
-
     /// Create new color from RGB components [0. .. 1.0],
     ///   alpha value set to 1.0
     ///
@@ -156,10 +153,11 @@ impl Color {
     /// assert_eq!(purple.to_rgb255(), (255,0,255));
     /// ```
     pub fn to_rgb255(&self) -> (u8, u8, u8) {
-        let r = (self.red * 255.0) as u8;
-        let g = (self.green * 255.0) as u8;
-        let b = (self.blue * 255.0) as u8;
-        (r, g, b)
+        (
+            (self.red * 255.0) as u8,
+            (self.green * 255.0) as u8,
+            (self.blue * 255.0) as u8,
+        )
     }
 
     // HEX
@@ -373,7 +371,7 @@ impl<'a> From<&'a Vec<f32>> for Color {
         Color::from(&c64)
     }
 }
-/// Convert from a f32 Vec, red, green, blue, maybe alpha
+/// Convert from a f64 Vec, red, green, blue, maybe alpha
 ///
 /// This may fail
 impl From<Vec<f64>> for Color {
