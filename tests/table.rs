@@ -1,4 +1,4 @@
-extern crate tint;
+use tint;
 
 #[test]
 fn table() {

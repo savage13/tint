@@ -401,7 +401,7 @@ impl PartialEq for Color {
 }
 
 impl fmt::Display for Color {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "({:5.3}, {:5.3}, {:5.3}, {:5.3})",

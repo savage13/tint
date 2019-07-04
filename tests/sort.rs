@@ -1,4 +1,4 @@
-extern crate tint;
+use tint;
 
 fn by_rgb(a: &str, b: &str) -> std::cmp::Ordering {
     let ca = tint::Color::from(a);
