@@ -550,12 +550,14 @@ pub fn compare_by_hsv(a: &Color, b: &Color) -> std::cmp::Ordering {
 
 // https://en.wikipedia.org/wiki/YIQ#From_RGB_to_YIQ
 // FCC NTSC Standard
+#[allow(clippy::many_single_char_names)]
 fn rgb2yiq(r: f64, g: f64, b: f64) -> (f64, f64, f64) {
     let y = 0.30 * r + 0.59 * g + 0.11 * b;
     let i = 0.74 * (r - y) - 0.27 * (b - y);
     let q = 0.48 * (r - y) + 0.41 * (b - y);
     (y, i, q)
 }
+#[allow(clippy::many_single_char_names)]
 fn yiq2rgb(y: f64, i: f64, q: f64) -> (f64, f64, f64) {
     let v33 = 1.709_006_928_406_466_6;
     let v32 = -1.108_545_034_642_032_2;
@@ -593,6 +595,7 @@ fn fmax(v: &[f64]) -> f64 {
 /// h : [0, 360]
 /// s : [0, 1]
 /// v : [0, 1]
+#[allow(clippy::many_single_char_names)]
 fn rgb2hsv(r: f64, g: f64, b: f64) -> (f64, f64, f64) {
     let cmax = fmax(&[r, g, b]);
     let cmin = fmin(&[r, g, b]);
