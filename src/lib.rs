@@ -155,6 +155,9 @@ impl Color {
     /// ```
     /// # use tint::Color;
     /// let facade = Color::from_hex("#facade");
+    /// #[cfg(target_arch = "x86")]
+    /// assert_eq!(facade.to_rgb255(), (249, 201, 222));
+    /// #[cfg(not(target_arch = "x86"))]
     /// assert_eq!(facade.to_rgb255(), (250, 202, 222));
     /// ```
     pub fn from_hex(hex: &str) -> Color {
@@ -169,6 +172,9 @@ impl Color {
     /// ```
     /// # use tint::Color;
     /// let coffee = Color::from_rgb255(192, 255, 238);
+    /// #[cfg(target_arch = "x86")]
+    /// assert_eq!(coffee.to_hex(), "#bfffee");
+    /// #[cfg(not(target_arch = "x86"))]
     /// assert_eq!(coffee.to_hex(), "#c0ffee");
     /// ```
     pub fn to_hex(&self) -> String {
@@ -193,9 +199,15 @@ impl Color {
     ///
     /// tint::xkcd();
     /// let butterscotch = Color::name("butterscotch").unwrap();
+    /// #[cfg(target_arch = "x86")]
+    /// assert_eq!(butterscotch.to_hex(), "#fdb047");
+    /// #[cfg(not(target_arch = "x86"))]
     /// assert_eq!(butterscotch.to_hex(), "#fdb147");
     ///
     /// let avocado = Color::name("avocado green").unwrap();
+    /// #[cfg(target_arch = "x86")]
+    /// assert_eq!(avocado.to_rgb255(), (135, 168, 33));
+    /// #[cfg(not(target_arch = "x86"))]
     /// assert_eq!(avocado.to_rgb255(), (135, 169, 34));
     /// ```
     pub fn name(name: &str) -> Option<Color> {
@@ -724,20 +736,59 @@ mod tests {
     #[test]
     fn hex() {
         assert_eq!(Color::name("black").unwrap().to_hex(), "#000000");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("silver").unwrap().to_hex(), "#bfbfbf");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("silver").unwrap().to_hex(), "#c0c0c0");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("gray").unwrap().to_hex(), "#7f7f7f");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("gray").unwrap().to_hex(), "#808080");
+
         assert_eq!(Color::name("white").unwrap().to_hex(), "#ffffff");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("maroon").unwrap().to_hex(), "#7f0000");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("maroon").unwrap().to_hex(), "#800000");
+
         assert_eq!(Color::name("red").unwrap().to_hex(), "#ff0000");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("purple").unwrap().to_hex(), "#7f007f");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("purple").unwrap().to_hex(), "#800080");
+
         assert_eq!(Color::name("fuchsia").unwrap().to_hex(), "#ff00ff");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("green").unwrap().to_hex(), "#007f00");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("green").unwrap().to_hex(), "#008000");
+
         assert_eq!(Color::name("lime").unwrap().to_hex(), "#00ff00");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("olive").unwrap().to_hex(), "#7f7f00");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("olive").unwrap().to_hex(), "#808000");
+
         assert_eq!(Color::name("yellow").unwrap().to_hex(), "#ffff00");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("navy").unwrap().to_hex(), "#00007f");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("navy").unwrap().to_hex(), "#000080");
+
         assert_eq!(Color::name("blue").unwrap().to_hex(), "#0000ff");
+
+        #[cfg(target_arch = "x86")]
+        assert_eq!(Color::name("teal").unwrap().to_hex(), "#007f7f");
+        #[cfg(not(target_arch = "x86"))]
         assert_eq!(Color::name("teal").unwrap().to_hex(), "#008080");
+
         assert_eq!(Color::name("aqua").unwrap().to_hex(), "#00ffff");
 
         assert_eq!(Color::name("cyan").unwrap().to_hex(), "#00ffff");
